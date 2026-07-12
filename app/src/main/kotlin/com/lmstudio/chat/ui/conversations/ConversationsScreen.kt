@@ -1,0 +1,155 @@
+package com.lmstudio.chat.ui.conversations
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.lmstudio.chat.theme.*
+import com.lmstudio.chat.ui.components.ConversationItem
+import com.lmstudio.chat.ui.components.ConversationShimmer
+import com.lmstudio.chat.ui.components.LmTopBar
+import kotlinx.coroutines.launch
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ConversationsScreen(
+    onNavigateToChat: (Long) -> Unit,
+    onNavigateBack: () -> Unit,
+    onNavigateToSearch: () -> Unit,
+    onNavigateToNewChat: () -> Unit,
+    viewModel: ConversationsViewModel = hiltViewModel()
+) {
+    val state by viewModel.uiState.collectAsState()
+    var searchQuery by remember { mutableStateOf("") }
+    var conversationToRename by remember { mutableStateOf<Long?>(null) }
+    var renameTitleInput by remember { mutableStateOf("") }
+
+    Scaffold(
+        topBar = {
+            LmTopBar(
+                title = "Conversations",
+                onNavigateBack = onNavigateBack,
+                actions = {
+                    IconButton(onClick = onNavigateToSearch) {
+                        Icon(Icons.Default.Search, null, tint = TextPrimary)
+                    }
+                }
+            )
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = onNavigateToNewChat,
+                containerColor = AccentPrimary,
+                contentColor = Background
+            ) {
+                Icon(Icons.Default.Add, null)
+            }
+        }
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Background)
+                .padding(padding)
+        ) {
+            // Search Input
+            OutlinedTextField(
+                value = searchQuery,
+                onValueChange = {
+                    searchQuery = it
+                    viewModel.searchConversations(it)
+                },
+                placeholder = { Text("Search conversations...", color = TextTertiary) },
+                leadingIcon = { Icon(Icons.Default.Search, null, tint = TextSecondary) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                shape = RoundedCornerShape(12.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedContainerColor = SurfaceVariant,
+                    unfocusedContainerColor = SurfaceVariant,
+                    focusedBorderColor = OutlineBright,
+                    unfocusedBorderColor = OutlineSubtle,
+                    focusedTextColor = TextPrimary,
+                    unfocusedTextColor = TextPrimary
+                )
+            )
+
+            if (state.isLoading) {
+                ConversationShimmer(modifier = Modifier.weight(1f))
+            } else if (state.conversations.isEmpty()) {
+                Box(
+                    modifier = Modifier.weight(1f).fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("No conversations found", color = TextTertiary)
+                }
+            } else {
+                LazyColumn(modifier = Modifier.weight(1f)) {
+                    items(state.conversations, key = { it.id }) { chat ->
+                        ConversationItem(
+                            conversation = chat,
+                            onClick = { onNavigateToChat(chat.id) },
+                            onPin = { viewModel.pinConversation(chat.id, !chat.isPinned) },
+                            onArchive = { viewModel.archiveConversation(chat.id, !chat.isArchived) },
+                            onDelete = { viewModel.deleteConversation(chat.id) },
+                            onRename = {
+                                conversationToRename = chat.id
+                                renameTitleInput = chat.title
+                            }
+                        )
+                    }
+                }
+            }
+        }
+
+        // Rename Dialog
+        if (conversationToRename != null) {
+            AlertDialog(
+                onDismissRequest = { conversationToRename = null },
+                title = { Text("Rename Conversation", color = TextPrimary) },
+                text = {
+                    OutlinedTextField(
+                        value = renameTitleInput,
+                        onValueChange = { renameTitleInput = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = AccentPrimary,
+                            unfocusedBorderColor = OutlineDefault
+                        )
+                    )
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            conversationToRename?.let { id ->
+                                if (renameTitleInput.isNotBlank()) {
+                                    viewModel.renameConversation(id, renameTitleInput)
+                                }
+                            }
+                            conversationToRename = null
+                        }
+                    ) {
+                        Text("Rename", color = AccentPrimary)
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { conversationToRename = null }) {
+                        Text("Cancel", color = TextSecondary)
+                    }
+                },
+                containerColor = SurfaceElevated
+            )
+        }
+    }
+}

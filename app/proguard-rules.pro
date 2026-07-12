@@ -1,0 +1,5 @@
+-keep class com.lmstudio.chat.data.remote.dto.** { *; }
+-keep class com.google.gson.** { *; }
+-dontwarn okhttp3.**
+-dontwarn okio.**
+-dontwarn retrofit2.**
