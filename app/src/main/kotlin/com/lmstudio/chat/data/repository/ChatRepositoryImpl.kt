@@ -15,10 +15,18 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
+import android.content.Context
+import android.util.Base64
+import com.lmstudio.chat.data.remote.dto.ContentPartDto
+import com.lmstudio.chat.data.remote.dto.ImageUrlDto
+import dagger.hilt.android.qualifiers.ApplicationContext
+import java.io.InputStream
+
 @Singleton
 class ChatRepositoryImpl @Inject constructor(
     private val messageDao: MessageDao,
-    private val streamingService: StreamingService
+    private val streamingService: StreamingService,
+    @ApplicationContext private val context: Context
 ) : ChatRepository {
 
     override fun getMessages(conversationId: Long): Flow<List<Message>> =
@@ -57,6 +65,25 @@ class ChatRepositoryImpl @Inject constructor(
     override suspend fun editMessage(id: Long, newContent: String) =
         messageDao.updateMessageContent(id, newContent)
 
+    private fun convertUriToBase64(uriString: String): String? {
+        return try {
+            val uri = android.net.Uri.parse(uriString)
+            val inputStream: InputStream? = context.contentResolver.openInputStream(uri)
+            val bytes = inputStream?.readBytes()
+            inputStream?.close()
+            if (bytes != null) {
+                val base64String = Base64.encodeToString(bytes, Base64.NO_WRAP)
+                val type = context.contentResolver.getType(uri) ?: "image/jpeg"
+                "data:$type;base64,$base64String"
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
     override fun streamResponse(
         baseUrl: String,
         apiKey: String,
@@ -73,14 +100,32 @@ class ChatRepositoryImpl @Inject constructor(
         }
         messages.forEach { msg ->
             if (!msg.isError) {
+                val roleStr = when (msg.role) {
+                    MessageRole.USER -> "user"
+                    MessageRole.ASSISTANT -> "assistant"
+                    MessageRole.SYSTEM -> "system"
+                }
+
+                val payloadContent: Any = if (msg.role == MessageRole.USER && msg.images.isNotEmpty()) {
+                    val parts = mutableListOf<ContentPartDto>()
+                    if (msg.content.isNotBlank()) {
+                        parts.add(ContentPartDto(type = "text", text = msg.content))
+                    }
+                    msg.images.forEach { imgUri ->
+                        val base64 = convertUriToBase64(imgUri)
+                        if (base64 != null) {
+                            parts.add(ContentPartDto(type = "image_url", imageUrl = ImageUrlDto(url = base64)))
+                        }
+                    }
+                    parts
+                } else {
+                    msg.content
+                }
+
                 chatMessages.add(
                     ChatMessageDto(
-                        role = when (msg.role) {
-                            MessageRole.USER -> "user"
-                            MessageRole.ASSISTANT -> "assistant"
-                            MessageRole.SYSTEM -> "system"
-                        },
-                        content = msg.content
+                        role = roleStr,
+                        content = payloadContent
                     )
                 )
             }

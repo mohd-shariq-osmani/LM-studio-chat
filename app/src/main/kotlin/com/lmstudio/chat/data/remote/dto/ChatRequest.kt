@@ -14,5 +14,15 @@ data class ChatRequest(
 
 data class ChatMessageDto(
     @SerializedName("role") val role: String,
-    @SerializedName("content") val content: String
+    @SerializedName("content") val content: Any // Can be String or List<ContentPartDto>
+)
+
+data class ContentPartDto(
+    @SerializedName("type") val type: String,
+    @SerializedName("text") val text: String? = null,
+    @SerializedName("image_url") val imageUrl: ImageUrlDto? = null
+)
+
+data class ImageUrlDto(
+    @SerializedName("url") val url: String
 )
