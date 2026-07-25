@@ -186,14 +186,14 @@ fun HomeScreen(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(90.dp)
+                            .height(80.dp)
                             .clip(RoundedCornerShape(14.dp))
                             .background(SurfaceCard)
                             .border(0.5.dp, GlassBorder, RoundedCornerShape(14.dp)),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "No recent chats. Start one above!",
+                            text = "No recent conversations",
                             color = TextTertiary,
                             style = MaterialTheme.typography.bodyMedium
                         )
@@ -230,14 +230,14 @@ fun HomeScreen(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(90.dp)
+                            .height(80.dp)
                             .clip(RoundedCornerShape(14.dp))
                             .background(SurfaceCard)
                             .border(0.5.dp, GlassBorder, RoundedCornerShape(14.dp)),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "No favorite personas yet.",
+                            text = "No favorite personas",
                             color = TextTertiary,
                             style = MaterialTheme.typography.bodyMedium
                         )

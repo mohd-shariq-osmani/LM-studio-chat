@@ -92,7 +92,7 @@ fun ConversationsScreen(
                     modifier = Modifier.weight(1f).fillMaxWidth(),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("No conversations found", color = TextTertiary)
+                    Text("No conversations", color = TextTertiary, style = MaterialTheme.typography.bodyMedium)
                 }
             } else {
                 LazyColumn(modifier = Modifier.weight(1f)) {

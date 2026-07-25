@@ -2,51 +2,52 @@ package com.lmstudio.chat.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Apple System Dark Backgrounds
-val Background = Color(0xFF000000)          // System Background (Pure OLED Black)
-val SurfaceContainer = Color(0xFF1C1C1E)    // System Secondary Background (Grouped / Card)
-val SurfaceVariant = Color(0xFF2C2C2E)      // System Tertiary Background (Inputs / Elevated Cards)
-val SurfaceElevated = Color(0xFF3A3A3C)     // System Quaternary Background (Sheets / Floating Popovers)
-val SurfaceCard = Color(0xFF1C1C1E)
+// Frontend Design Pro - Cinema Dark Surfaces
+val Background = Color(0xFF050508)          // Deep Screen Background (#050508)
+val SurfaceContainer = Color(0xFF0C0C12)    // Inset Card / Section Surface (#0C0C12)
+val SurfaceVariant = Color(0xFF14141E)      // Input / Segment Control Surface (#14141E)
+val SurfaceElevated = Color(0xFF1B1B26)     // Modal Sheet / Floating Popover Surface (#1B1B26)
+val SurfaceCard = Color(0xFF0C0C12)
 
-// Apple Vibrancy / Glass Materials
-val GlassFill = Color(0x26FFFFFF)           // Thin Material (15% White)
-val GlassBorder = Color(0x33FFFFFF)         // Specular Rim Highlight (20% White)
-val GlassCardFill = Color(0x1F2C2C2E)       // Frosted card fill
-val GlassHeaderFill = Color(0xD9000000)     // Translucent Bar Fill
+// Translucent Glass & Specular Hairlines
+val GlassFill = Color(0x14FFFFFF)           // 8% White Frosted Fill
+val GlassBorder = Color(0x1FFFFFFF)         // 12% White Hairline Specular Border
+val GlassCardFill = Color(0x1A14141E)       // Translucent Card Glass
+val GlassHeaderFill = Color(0xE6050508)     // Translucent Top Bar Blur Fill
 
-// Apple Typography Colors
-val TextPrimary = Color(0xFFFFFFFF)         // Label (100% White)
-val TextSecondary = Color(0x99EBEBF5)       // Secondary Label (60% White)
-val TextTertiary = Color(0x4DEBEBF5)        // Tertiary Label (30% White)
-val TextDisabled = Color(0x26EBEBF5)        // Quaternary Label (15% White)
+// Professional Typography Color Hierarchy
+val TextPrimary = Color(0xFFFFFFFF)         // 100% White (Primary Headlines & Labels)
+val TextSecondary = Color(0xFF9A9AB0)       // 60% Slate Muted (Subtitles & Secondary Text)
+val TextTertiary = Color(0xFF5A5A72)        // 35% Dim Slate (Captions & Timestamps)
+val TextDisabled = Color(0xFF323242)        // 20% Disabled State
 
-// Apple System Accent Colors (Apple System Blue Palette)
-val AccentPrimary = Color(0xFF0A84FF)        // Apple System Blue (Dark)
-val AccentPrimaryDim = Color(0xFF0055B3)     // Deep Blue Tint
-val AccentSuccess = Color(0xFF30D158)        // Apple System Green
-val AccentIndigo = Color(0xFF5E5CE6)         // Apple System Indigo
-val AccentPurple = Color(0xFFBF5AF2)         // Apple System Purple
-val AccentDanger = Color(0xFFFF453A)         // Apple System Red
-val AccentWarning = Color(0xFFFF9F0A)        // Apple System Orange
+// Product Accent System (Apple Pro Blue & Semantic Colors)
+val AccentPrimary = Color(0xFF0A84FF)        // Apple Pro System Blue
+val AccentPrimaryDim = Color(0xFF0055B3)     // Deep Blue Shade
+val AccentSuccess = Color(0xFF30D158)        // Emerald Green
+val AccentIndigo = Color(0xFF5E5CE6)         // Vivid Indigo
+val AccentPurple = Color(0xFFBF5AF2)         // Electric Violet
+val AccentDanger = Color(0xFFFF453A)         // Crimson Red
+val AccentWarning = Color(0xFFFF9F0A)        // Amber Orange
 
-// Borders & Separators
-val OutlineSubtle = Color(0x38545458)       // Opaque Separator (22% Dark Gray)
-val OutlineDefault = Color(0x54545458)      // System Fill Separator (33% Gray)
-val OutlineBright = Color(0x8C545458)       // Active Highlight
+// Hairline Separators
+val OutlineSubtle = Color(0x1AFFFFFF)       // 10% Hairline Separator
+val OutlineDefault = Color(0x2EFFFFFF)      // 18% Hairline Border
+val OutlineBright = Color(0x52FFFFFF)       // Active Input Highlight
 
-// Chat Message Bubbles (iOS iMessage / macOS Style)
-val UserBubble = Color(0xFF0A84FF)           // Apple Blue Accent Bubble
+// Chat Message Bubbles
+val UserBubble = Color(0xFF0A84FF)           // Primary Action Bubble
 val UserBubbleText = Color(0xFFFFFFFF)
-val AssistantBubble = Color(0xFF2C2C2E)      // Apple System Gray 5 Bubble
-val AssistantBubbleText = Color(0xFFF2F2F7)
+val AssistantBubble = Color(0xFF14141E)      // Assistant Surface Bubble
+val AssistantBubbleText = Color(0xFFEDEDEF)
 
-// Code Block (Xcode Dark theme feel)
-val CodeBackground = Color(0xFF161618)
+// Xcode Dark Monospace Code Blocks
+val CodeBackground = Color(0xFF0A0A0F)
 val CodeText = Color(0xFFE5E5EA)
 
 // Status Indicators
 val OnlineGreen = Color(0xFF30D158)
 val ErrorRed = Color(0xFFFF453A)
 val WarningAmber = Color(0xFFFF9F0A)
+
 

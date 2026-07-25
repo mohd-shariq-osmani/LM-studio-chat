@@ -49,9 +49,9 @@ fun LmBottomBar(
                 .fillMaxWidth()
                 .height(64.dp),
             shape = RoundedCornerShape(32.dp),
-            color = Color(0xF21C1C1E),
-            border = androidx.compose.foundation.BorderStroke(0.5.dp, GlassBorder.copy(alpha = 0.4f)),
-            shadowElevation = 12.dp
+            color = SurfaceElevated.copy(alpha = 0.95f),
+            border = androidx.compose.foundation.BorderStroke(0.5.dp, GlassBorder),
+            shadowElevation = 8.dp
         ) {
             Row(
                 modifier = Modifier
