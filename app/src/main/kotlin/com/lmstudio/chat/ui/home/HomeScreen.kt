@@ -26,6 +26,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.lmstudio.chat.domain.model.Conversation
 import com.lmstudio.chat.domain.model.Persona
 import com.lmstudio.chat.theme.*
+import com.lmstudio.chat.ui.components.BottomTab
+import com.lmstudio.chat.ui.components.LmBottomBar
 import com.lmstudio.chat.ui.components.ModelSelector
 import com.lmstudio.chat.util.DateUtils
 import com.lmstudio.chat.util.applePressEffect
@@ -46,66 +48,17 @@ fun HomeScreen(
 
     Scaffold(
         bottomBar = {
-            NavigationBar(
-                containerColor = GlassHeaderFill,
-                tonalElevation = 0.dp,
-                modifier = Modifier
-                    .border(0.5.dp, GlassBorder.copy(alpha = 0.2f))
-                    .navigationBarsPadding()
-            ) {
-                NavigationBarItem(
-                    selected = true,
-                    onClick = {},
-                    icon = { Icon(Icons.Default.Home, null) },
-                    label = { Text("Home", style = MaterialTheme.typography.labelSmall) },
-                    colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = AccentPrimary,
-                        selectedTextColor = AccentPrimary,
-                        indicatorColor = Color.Transparent,
-                        unselectedIconColor = TextTertiary,
-                        unselectedTextColor = TextTertiary
-                    )
-                )
-                NavigationBarItem(
-                    selected = false,
-                    onClick = onNavigateToConversations,
-                    icon = { Icon(Icons.AutoMirrored.Filled.Chat, null) },
-                    label = { Text("Chats", style = MaterialTheme.typography.labelSmall) },
-                    colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = AccentPrimary,
-                        selectedTextColor = AccentPrimary,
-                        indicatorColor = Color.Transparent,
-                        unselectedIconColor = TextTertiary,
-                        unselectedTextColor = TextTertiary
-                    )
-                )
-                NavigationBarItem(
-                    selected = false,
-                    onClick = onNavigateToPersonas,
-                    icon = { Icon(Icons.Default.Face, null) },
-                    label = { Text("Personas", style = MaterialTheme.typography.labelSmall) },
-                    colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = AccentPrimary,
-                        selectedTextColor = AccentPrimary,
-                        indicatorColor = Color.Transparent,
-                        unselectedIconColor = TextTertiary,
-                        unselectedTextColor = TextTertiary
-                    )
-                )
-                NavigationBarItem(
-                    selected = false,
-                    onClick = onNavigateToSettings,
-                    icon = { Icon(Icons.Default.Settings, null) },
-                    label = { Text("Settings", style = MaterialTheme.typography.labelSmall) },
-                    colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = AccentPrimary,
-                        selectedTextColor = AccentPrimary,
-                        indicatorColor = Color.Transparent,
-                        unselectedIconColor = TextTertiary,
-                        unselectedTextColor = TextTertiary
-                    )
-                )
-            }
+            LmBottomBar(
+                currentTab = BottomTab.HOME,
+                onTabSelected = { tab ->
+                    when (tab) {
+                        BottomTab.HOME -> {}
+                        BottomTab.CHATS -> onNavigateToConversations()
+                        BottomTab.PERSONAS -> onNavigateToPersonas()
+                        BottomTab.SETTINGS -> onNavigateToSettings()
+                    }
+                }
+            )
         }
     ) { padding ->
         LazyColumn(
