@@ -39,6 +39,44 @@ fun ConversationsScreen(
     var renameTitleInput by remember { mutableStateOf("") }
 
     Scaffold(
+        topBar = {
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                color = Background
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .statusBarsPadding()
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    IconButton(
+                        onClick = onNavigateBack,
+                        modifier = Modifier
+                            .size(38.dp)
+                            .clip(androidx.compose.foundation.shape.CircleShape)
+                            .background(SurfaceVariant)
+                            .border(0.5.dp, GlassBorder, androidx.compose.foundation.shape.CircleShape)
+                            .applePressEffect(onClick = onNavigateBack)
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            tint = TextPrimary,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+
+                    Text(
+                        text = "Conversations",
+                        style = MaterialTheme.typography.headlineMedium.copy(fontWeight = androidx.compose.ui.text.font.FontWeight.Bold),
+                        color = TextPrimary
+                    )
+                }
+            }
+        },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = onNavigateToNewChat,
@@ -60,38 +98,6 @@ fun ConversationsScreen(
                 .padding(padding)
                 .padding(horizontal = 16.dp)
         ) {
-            // Unified Screen Header
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .statusBarsPadding()
-                    .padding(top = 12.dp, bottom = 8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                IconButton(
-                    onClick = onNavigateBack,
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(androidx.compose.foundation.shape.CircleShape)
-                        .background(SurfaceVariant)
-                        .border(0.5.dp, GlassBorder, androidx.compose.foundation.shape.CircleShape)
-                        .applePressEffect(onClick = onNavigateBack)
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Back",
-                        tint = TextPrimary,
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
-
-                Text(
-                    text = "Conversations",
-                    style = MaterialTheme.typography.headlineMedium.copy(fontWeight = androidx.compose.ui.text.font.FontWeight.Bold),
-                    color = TextPrimary
-                )
-            }
 
             // Search Bar Capsule
             OutlinedTextField(

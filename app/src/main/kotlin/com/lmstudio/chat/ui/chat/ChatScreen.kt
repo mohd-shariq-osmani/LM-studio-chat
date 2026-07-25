@@ -75,27 +75,19 @@ fun ChatScreen(
     var isRenameDialogOpen by remember { mutableStateOf(false) }
     var renameTitleInput by remember(state.conversationTitle) { mutableStateOf(state.conversationTitle) }
 
-    Scaffold { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Background)
-                .padding(padding)
-                .imePadding()
-        ) {
-            // Unified Top Screen Header
+    Scaffold(
+        topBar = {
             Surface(
                 modifier = Modifier.fillMaxWidth(),
-                color = GlassHeaderFill,
-                border = androidx.compose.foundation.BorderStroke(0.5.dp, GlassBorder.copy(alpha = 0.2f))
+                color = Background
             ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .statusBarsPadding()
-                        .padding(horizontal = 16.dp, vertical = 10.dp),
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     IconButton(
                         onClick = onNavigateBack,
@@ -110,7 +102,7 @@ fun ChatScreen(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
                             tint = TextPrimary,
-                            modifier = Modifier.size(18.dp)
+                            modifier = Modifier.size(20.dp)
                         )
                     }
 
@@ -118,6 +110,7 @@ fun ChatScreen(
                         modifier = Modifier
                             .weight(1f)
                             .clickable { isRenameDialogOpen = true }
+                            .padding(vertical = 2.dp)
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
@@ -155,42 +148,45 @@ fun ChatScreen(
                             }
                             context.startActivity(android.content.Intent.createChooser(intent, "Export Chat"))
                         },
-                        modifier = Modifier
-                            .size(36.dp)
-                            .applePressEffect(onClick = {
-                                val text = viewModel.exportChatText()
-                                val intent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
-                                    type = "text/plain"
-                                    putExtra(android.content.Intent.EXTRA_SUBJECT, state.conversationTitle)
-                                    putExtra(android.content.Intent.EXTRA_TEXT, text)
-                                }
-                                context.startActivity(android.content.Intent.createChooser(intent, "Export Chat"))
-                            })
+                        modifier = Modifier.applePressEffect(onClick = {
+                            val text = viewModel.exportChatText()
+                            val intent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
+                                type = "text/plain"
+                                putExtra(android.content.Intent.EXTRA_SUBJECT, state.conversationTitle)
+                                putExtra(android.content.Intent.EXTRA_TEXT, text)
+                            }
+                            context.startActivity(android.content.Intent.createChooser(intent, "Export Chat"))
+                        })
                     ) {
-                        Icon(Icons.Default.Share, "Export Chat as TXT", tint = TextPrimary, modifier = Modifier.size(18.dp))
+                        Icon(Icons.Default.Share, "Export Chat as TXT", tint = TextPrimary, modifier = Modifier.size(20.dp))
                     }
 
                     // Persona Selector Sheet Button
                     IconButton(
                         onClick = { isPersonaSheetOpen = true },
-                        modifier = Modifier
-                            .size(36.dp)
-                            .applePressEffect(onClick = { isPersonaSheetOpen = true })
+                        modifier = Modifier.applePressEffect(onClick = { isPersonaSheetOpen = true })
                     ) {
-                        Icon(Icons.Default.Face, "Change Persona", tint = TextPrimary, modifier = Modifier.size(18.dp))
+                        Icon(Icons.Default.Face, "Change Persona", tint = TextPrimary, modifier = Modifier.size(20.dp))
                     }
 
                     // Settings Button
                     IconButton(
                         onClick = onNavigateToSettings,
-                        modifier = Modifier
-                            .size(36.dp)
-                            .applePressEffect(onClick = onNavigateToSettings)
+                        modifier = Modifier.applePressEffect(onClick = onNavigateToSettings)
                     ) {
-                        Icon(Icons.Default.Settings, "Settings", tint = TextPrimary, modifier = Modifier.size(18.dp))
+                        Icon(Icons.Default.Settings, "Settings", tint = TextPrimary, modifier = Modifier.size(20.dp))
                     }
                 }
             }
+        }
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Background)
+                .padding(padding)
+                .imePadding()
+        ) {
             // Message List
             LazyColumn(
                 state = listState,
