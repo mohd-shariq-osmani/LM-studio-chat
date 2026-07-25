@@ -2,6 +2,7 @@ package com.lmstudio.chat.ui.components
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -15,15 +16,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalClipboardManager
-import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lmstudio.chat.domain.model.Message
 import com.lmstudio.chat.domain.model.MessageRole
 import com.lmstudio.chat.theme.*
 import com.lmstudio.chat.util.DateUtils
-import com.lmstudio.chat.util.TokenCounter
+import com.lmstudio.chat.util.applePressEffect
 
 @Composable
 fun MessageBubble(
@@ -42,10 +42,17 @@ fun MessageBubble(
     var isEditing by remember { mutableStateOf(false) }
     var editContent by remember { mutableStateOf(message.content) }
 
+    val bubbleShape = RoundedCornerShape(
+        topStart = 20.dp,
+        topEnd = 20.dp,
+        bottomStart = if (isUser) 20.dp else 6.dp,
+        bottomEnd = if (isUser) 6.dp else 20.dp
+    )
+
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 6.dp)
+            .padding(horizontal = 16.dp, vertical = 5.dp)
             .animateContentSize(),
         horizontalAlignment = alignment
     ) {
@@ -55,17 +62,15 @@ fun MessageBubble(
         ) {
             Box(
                 modifier = Modifier
-                    .clip(
-                        RoundedCornerShape(
-                            topStart = 16.dp,
-                            topEnd = 16.dp,
-                            bottomStart = if (isUser) 16.dp else 4.dp,
-                            bottomEnd = if (isUser) 4.dp else 16.dp
-                        )
-                    )
+                    .clip(bubbleShape)
                     .background(bg)
+                    .border(
+                        width = 0.5.dp,
+                        color = if (isUser) Color(0x33FFFFFF) else GlassBorder.copy(alpha = 0.3f),
+                        shape = bubbleShape
+                    )
                     .padding(horizontal = 16.dp, vertical = 12.dp)
-                    .widthIn(max = 300.dp)
+                    .widthIn(max = 320.dp)
             ) {
                 Column {
                     if (message.images.isNotEmpty()) {
@@ -75,9 +80,9 @@ fun MessageBubble(
                                 contentDescription = "Attached image",
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .heightIn(max = 200.dp)
+                                    .heightIn(max = 220.dp)
                                     .padding(bottom = 8.dp)
-                                    .clip(RoundedCornerShape(8.dp)),
+                                    .clip(RoundedCornerShape(14.dp)),
                                 contentScale = androidx.compose.ui.layout.ContentScale.Crop
                             )
                         }
@@ -94,7 +99,9 @@ fun MessageBubble(
                             )
                         )
                         Row(
-                            modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 8.dp),
                             horizontalArrangement = Arrangement.End,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
@@ -114,7 +121,11 @@ fun MessageBubble(
                         }
                     } else {
                         if (isUser) {
-                            Text(text = message.content, color = textColor, style = MaterialTheme.typography.bodyMedium)
+                            Text(
+                                text = message.content,
+                                color = textColor,
+                                style = MaterialTheme.typography.bodyLarge.copy(fontSize = 15.sp)
+                            )
                         } else {
                             MarkdownText(text = message.content, textColor = textColor)
                         }
@@ -125,8 +136,8 @@ fun MessageBubble(
 
         if (!isEditing && !message.isStreaming) {
             Row(
-                modifier = Modifier.padding(top = 4.dp, start = 8.dp, end = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.padding(top = 4.dp, start = 6.dp, end = 6.dp),
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
@@ -152,14 +163,18 @@ fun MessageBubble(
                     imageVector = Icons.Default.ContentCopy,
                     contentDescription = "Copy",
                     tint = TextTertiary,
-                    modifier = Modifier.size(14.dp).clickable { onCopy() }
+                    modifier = Modifier
+                        .size(14.dp)
+                        .applePressEffect(onClick = onCopy)
                 )
                 if (isUser && onEdit != null) {
                     Icon(
                         imageVector = Icons.Default.Edit,
                         contentDescription = "Edit",
                         tint = TextTertiary,
-                        modifier = Modifier.size(14.dp).clickable { isEditing = true }
+                        modifier = Modifier
+                            .size(14.dp)
+                            .applePressEffect(onClick = { isEditing = true })
                     )
                 }
                 if (!isUser && onRegenerate != null) {
@@ -167,16 +182,21 @@ fun MessageBubble(
                         imageVector = Icons.Default.Refresh,
                         contentDescription = "Regenerate",
                         tint = TextTertiary,
-                        modifier = Modifier.size(14.dp).clickable { onRegenerate() }
+                        modifier = Modifier
+                            .size(14.dp)
+                            .applePressEffect(onClick = onRegenerate)
                     )
                 }
                 Icon(
                     imageVector = Icons.Default.Delete,
                     contentDescription = "Delete",
                     tint = TextTertiary,
-                    modifier = Modifier.size(14.dp).clickable { onDelete() }
+                    modifier = Modifier
+                        .size(14.dp)
+                        .applePressEffect(onClick = onDelete)
                 )
             }
         }
     }
 }
+

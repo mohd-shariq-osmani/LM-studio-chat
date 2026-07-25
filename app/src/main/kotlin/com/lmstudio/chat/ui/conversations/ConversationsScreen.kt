@@ -18,6 +18,7 @@ import com.lmstudio.chat.theme.*
 import com.lmstudio.chat.ui.components.ConversationItem
 import com.lmstudio.chat.ui.components.ConversationShimmer
 import com.lmstudio.chat.ui.components.LmTopBar
+import com.lmstudio.chat.util.applePressEffect
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -49,8 +50,10 @@ fun ConversationsScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = onNavigateToNewChat,
+                modifier = Modifier.applePressEffect(onClick = onNavigateToNewChat),
                 containerColor = AccentPrimary,
-                contentColor = Background
+                contentColor = androidx.compose.ui.graphics.Color.White,
+                shape = RoundedCornerShape(16.dp)
             ) {
                 Icon(Icons.Default.Add, null)
             }
@@ -74,12 +77,12 @@ fun ConversationsScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 8.dp),
-                shape = RoundedCornerShape(12.dp),
+                shape = RoundedCornerShape(14.dp),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = SurfaceVariant,
-                    unfocusedContainerColor = SurfaceVariant,
-                    focusedBorderColor = OutlineBright,
-                    unfocusedBorderColor = OutlineSubtle,
+                    focusedContainerColor = SurfaceVariant.copy(alpha = 0.85f),
+                    unfocusedContainerColor = SurfaceVariant.copy(alpha = 0.85f),
+                    focusedBorderColor = GlassBorder,
+                    unfocusedBorderColor = androidx.compose.ui.graphics.Color.Transparent,
                     focusedTextColor = TextPrimary,
                     unfocusedTextColor = TextPrimary
                 )

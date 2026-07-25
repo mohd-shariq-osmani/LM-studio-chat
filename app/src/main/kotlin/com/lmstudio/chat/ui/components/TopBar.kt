@@ -1,18 +1,23 @@
 package com.lmstudio.chat.ui.components
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.lmstudio.chat.theme.Background
-import com.lmstudio.chat.theme.OutlineSubtle
+import com.lmstudio.chat.theme.GlassBorder
+import com.lmstudio.chat.theme.GlassHeaderFill
 import com.lmstudio.chat.theme.TextPrimary
 import com.lmstudio.chat.theme.TextSecondary
+import com.lmstudio.chat.util.applePressEffect
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -22,40 +27,56 @@ fun LmTopBar(
     onNavigateBack: (() -> Unit)? = null,
     actions: @Composable RowScope.() -> Unit = {}
 ) {
-    TopAppBar(
-        title = {
-            Column {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = TextPrimary,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                if (subtitle.isNotBlank()) {
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(
+                width = 0.5.dp,
+                color = GlassBorder.copy(alpha = 0.2f)
+            ),
+        color = GlassHeaderFill
+    ) {
+        TopAppBar(
+            title = {
+                Column {
                     Text(
-                        text = subtitle,
-                        style = MaterialTheme.typography.labelSmall,
-                        color = TextSecondary
+                        text = title,
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                        color = TextPrimary,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
+                    if (subtitle.isNotBlank()) {
+                        Text(
+                            text = subtitle,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = TextSecondary,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
                 }
-            }
-        },
-        navigationIcon = {
-            if (onNavigateBack != null) {
-                IconButton(onClick = onNavigateBack) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "Back",
-                        tint = TextPrimary
-                    )
+            },
+            navigationIcon = {
+                if (onNavigateBack != null) {
+                    IconButton(
+                        onClick = onNavigateBack,
+                        modifier = Modifier.applePressEffect(onClick = onNavigateBack)
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            tint = TextPrimary
+                        )
+                    }
                 }
-            }
-        },
-        actions = actions,
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = Background,
-            titleContentColor = TextPrimary
+            },
+            actions = actions,
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = Color.Transparent,
+                titleContentColor = TextPrimary
+            )
         )
-    )
+    }
 }
+

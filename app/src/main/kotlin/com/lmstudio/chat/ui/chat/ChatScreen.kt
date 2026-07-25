@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -30,6 +31,7 @@ import com.lmstudio.chat.theme.*
 import com.lmstudio.chat.ui.components.LmTopBar
 import com.lmstudio.chat.ui.components.MessageBubble
 import com.lmstudio.chat.ui.components.TypingIndicator
+import com.lmstudio.chat.util.applePressEffect
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -161,76 +163,96 @@ fun ChatScreen(
             }
 
             // Input Bar
-            Row(
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    .padding(horizontal = 12.dp, vertical = 8.dp)
             ) {
-                IconButton(
-                    onClick = { imageLauncher.launch("image/*") },
-                    modifier = Modifier.size(48.dp)
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(26.dp))
+                        .background(SurfaceVariant.copy(alpha = 0.9f))
+                        .border(0.5.dp, GlassBorder.copy(alpha = 0.3f), RoundedCornerShape(26.dp))
+                        .padding(horizontal = 6.dp, vertical = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.AddPhotoAlternate,
-                        contentDescription = "Attach image",
-                        tint = TextPrimary
-                    )
-                }
-
-                OutlinedTextField(
-                    value = textInput,
-                    onValueChange = { textInput = it },
-                    placeholder = { Text("Type a message...", color = TextTertiary) },
-                    modifier = Modifier.weight(1f),
-                    shape = RoundedCornerShape(24.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedContainerColor = SurfaceVariant,
-                        unfocusedContainerColor = SurfaceVariant,
-                        focusedBorderColor = OutlineBright,
-                        unfocusedBorderColor = OutlineSubtle,
-                        focusedTextColor = TextPrimary,
-                        unfocusedTextColor = TextPrimary
-                    ),
-                    maxLines = 4
-                )
-
-                if (state.isGenerating) {
                     IconButton(
-                        onClick = viewModel::stopGeneration,
+                        onClick = { imageLauncher.launch("image/*") },
                         modifier = Modifier
-                            .size(48.dp)
-                            .clip(RoundedCornerShape(24.dp))
-                            .background(AccentDanger)
-                    ) {
-                        Icon(Icons.Default.Stop, null, tint = TextPrimary)
-                    }
-                } else {
-                    IconButton(
-                        onClick = {
-                            if (textInput.isNotBlank() || attachedImages.isNotEmpty()) {
-                                viewModel.sendMessage(textInput, attachedImages.toList())
-                                textInput = ""
-                                attachedImages.clear()
-                            }
-                        },
-                        modifier = Modifier
-                            .size(48.dp)
-                            .clip(RoundedCornerShape(24.dp))
-                            .background(if (textInput.isBlank() && attachedImages.isEmpty()) OutlineSubtle else AccentPrimary)
+                            .size(40.dp)
+                            .applePressEffect(onClick = { imageLauncher.launch("image/*") })
                     ) {
                         Icon(
-                            imageVector = Icons.Default.Send,
-                            contentDescription = "Send",
-                            tint = if (textInput.isBlank() && attachedImages.isEmpty()) TextTertiary else Background
+                            imageVector = Icons.Default.AddPhotoAlternate,
+                            contentDescription = "Attach image",
+                            tint = AccentPrimary
                         )
+                    }
+
+                    TextField(
+                        value = textInput,
+                        onValueChange = { textInput = it },
+                        placeholder = { Text("Message", color = TextTertiary) },
+                        modifier = Modifier.weight(1f),
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = Color.Transparent,
+                            unfocusedContainerColor = Color.Transparent,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            disabledIndicatorColor = Color.Transparent,
+                            focusedTextColor = TextPrimary,
+                            unfocusedTextColor = TextPrimary
+                        ),
+                        maxLines = 5
+                    )
+
+                    if (state.isGenerating) {
+                        IconButton(
+                            onClick = viewModel::stopGeneration,
+                            modifier = Modifier
+                                .size(36.dp)
+                                .applePressEffect(onClick = viewModel::stopGeneration)
+                                .clip(RoundedCornerShape(18.dp))
+                                .background(AccentDanger)
+                        ) {
+                            Icon(Icons.Default.Stop, null, tint = TextPrimary, modifier = Modifier.size(18.dp))
+                        }
+                    } else {
+                        val isSendActive = textInput.isNotBlank() || attachedImages.isNotEmpty()
+                        IconButton(
+                            onClick = {
+                                if (isSendActive) {
+                                    viewModel.sendMessage(textInput, attachedImages.toList())
+                                    textInput = ""
+                                    attachedImages.clear()
+                                }
+                            },
+                            modifier = Modifier
+                                .size(36.dp)
+                                .applePressEffect(enabled = isSendActive, onClick = {
+                                    if (isSendActive) {
+                                        viewModel.sendMessage(textInput, attachedImages.toList())
+                                        textInput = ""
+                                        attachedImages.clear()
+                                    }
+                                })
+                                .clip(RoundedCornerShape(18.dp))
+                                .background(if (isSendActive) AccentPrimary else OutlineSubtle)
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.Send,
+                                contentDescription = "Send",
+                                tint = if (isSendActive) Color.White else TextTertiary,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
                     }
                 }
             }
         }
 
-        // Persona selector sheet
+        // Persona selector sheet (Apple Material Sheet)
         if (isPersonaSheetOpen) {
             ModalBottomSheet(
                 onDismissRequest = { isPersonaSheetOpen = false },
@@ -242,10 +264,10 @@ fun ChatScreen(
                         .padding(bottom = 24.dp)
                 ) {
                     Text(
-                        text = "Switch Persona",
+                        text = "Choose Persona",
                         style = MaterialTheme.typography.titleMedium,
                         color = TextPrimary,
-                        modifier = Modifier.padding(16.dp)
+                        modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp)
                     )
                     HorizontalDivider(color = OutlineSubtle)
                     LazyColumn(
@@ -262,24 +284,24 @@ fun ChatScreen(
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .clickable {
+                                    .applePressEffect(onClick = {
                                         viewModel.selectPersona(persona)
                                         isPersonaSheetOpen = false
-                                    }
-                                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                                    })
+                                    .padding(horizontal = 20.dp, vertical = 12.dp),
                                 verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                horizontalArrangement = Arrangement.spacedBy(14.dp)
                             ) {
                                 Box(
                                     modifier = Modifier
-                                        .size(36.dp)
-                                        .clip(RoundedCornerShape(8.dp))
-                                        .background(accentColor.copy(alpha = 0.15f)),
+                                        .size(40.dp)
+                                        .clip(RoundedCornerShape(10.dp))
+                                        .background(accentColor.copy(alpha = 0.18f)),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text(
                                         text = persona.name.firstOrNull()?.toString()?.uppercase() ?: "?",
-                                        style = MaterialTheme.typography.titleSmall,
+                                        style = MaterialTheme.typography.titleMedium,
                                         color = accentColor
                                     )
                                 }

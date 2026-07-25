@@ -13,30 +13,37 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.lmstudio.chat.theme.GlassBorder
 import com.lmstudio.chat.theme.GlassFill
-import com.lmstudio.chat.theme.OutlineSubtle
+import com.lmstudio.chat.theme.SurfaceCard
+import com.lmstudio.chat.util.applePressEffect
 
 @Composable
 fun GlassCard(
     modifier: Modifier = Modifier,
     cornerRadius: Dp = 16.dp,
+    onClick: (() -> Unit)? = null,
     content: @Composable BoxScope.() -> Unit
 ) {
     val shape = RoundedCornerShape(cornerRadius)
     Box(
         modifier = modifier
+            .applePressEffect(enabled = onClick != null, onClick = onClick)
             .clip(shape)
             .background(
                 brush = Brush.verticalGradient(
-                    colors = listOf(GlassFill, Color(0x0DFFFFFF))
+                    colors = listOf(
+                        SurfaceCard.copy(alpha = 0.85f),
+                        Color(0xFF141416).copy(alpha = 0.95f)
+                    )
                 )
             )
             .border(
-                width = 1.dp,
+                width = 0.5.dp,
                 brush = Brush.verticalGradient(
-                    colors = listOf(GlassBorder, OutlineSubtle)
+                    colors = listOf(GlassBorder, Color(0x1AFFFFFF))
                 ),
                 shape = shape
             ),
         content = content
     )
 }
+

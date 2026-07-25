@@ -11,10 +11,12 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.lmstudio.chat.theme.*
 import com.lmstudio.chat.ui.components.LmTopBar
+import com.lmstudio.chat.util.applePressEffect
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -50,130 +52,173 @@ fun SettingsScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Text("LM Studio Connection", style = MaterialTheme.typography.titleMedium, color = AccentPrimary)
+            Text("LM STUDIO CONNECTION", style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold), color = TextSecondary)
 
-            OutlinedTextField(
-                value = baseUrlInput,
-                onValueChange = { baseUrlInput = it },
-                label = { Text("Base URL") },
+            Surface(
                 modifier = Modifier.fillMaxWidth(),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = AccentPrimary,
-                    unfocusedBorderColor = OutlineDefault
-                )
-            )
-
-            OutlinedTextField(
-                value = apiKeyInput,
-                onValueChange = { apiKeyInput = it },
-                label = { Text("API Key (optional)") },
-                modifier = Modifier.fillMaxWidth(),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = AccentPrimary,
-                    unfocusedBorderColor = OutlineDefault
-                )
-            )
-
-            Button(
-                onClick = {
-                    viewModel.updateBaseUrl(baseUrlInput)
-                    viewModel.updateApiKey(apiKeyInput)
-                },
-                modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(containerColor = AccentPrimary),
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(14.dp),
+                color = SurfaceCard,
+                border = androidx.compose.foundation.BorderStroke(0.5.dp, GlassBorder)
             ) {
-                Text("Save Connection Settings", color = Background)
-            }
-
-            HorizontalDivider(color = OutlineSubtle, modifier = Modifier.padding(vertical = 8.dp))
-
-            Text("Parameters Override", style = MaterialTheme.typography.titleMedium, color = AccentPrimary)
-
-            // Temperature Slider
-            Column {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text("Default Temperature", color = TextPrimary)
-                    Text(String.format("%.2f", tempInput), color = AccentPrimary)
-                }
-                Slider(
-                    value = tempInput,
-                    onValueChange = {
-                        tempInput = it
-                        viewModel.updateTemperature(it)
-                    },
-                    valueRange = 0f..2f,
-                    colors = SliderDefaults.colors(
-                        activeTrackColor = AccentPrimary,
-                        inactiveTrackColor = OutlineSubtle,
-                        thumbColor = AccentPrimary
+                Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    OutlinedTextField(
+                        value = baseUrlInput,
+                        onValueChange = { baseUrlInput = it },
+                        label = { Text("Base URL") },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(10.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = AccentPrimary,
+                            unfocusedBorderColor = OutlineDefault,
+                            focusedTextColor = TextPrimary,
+                            unfocusedTextColor = TextPrimary
+                        )
                     )
-                )
-            }
 
-            // Top P Slider
-            Column {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text("Default Top P", color = TextPrimary)
-                    Text(String.format("%.2f", topPInput), color = AccentPrimary)
-                }
-                Slider(
-                    value = topPInput,
-                    onValueChange = {
-                        topPInput = it
-                        viewModel.updateTopP(it)
-                    },
-                    valueRange = 0f..1f,
-                    colors = SliderDefaults.colors(
-                        activeTrackColor = AccentPrimary,
-                        inactiveTrackColor = OutlineSubtle,
-                        thumbColor = AccentPrimary
+                    OutlinedTextField(
+                        value = apiKeyInput,
+                        onValueChange = { apiKeyInput = it },
+                        label = { Text("API Key (optional)") },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(10.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = AccentPrimary,
+                            unfocusedBorderColor = OutlineDefault,
+                            focusedTextColor = TextPrimary,
+                            unfocusedTextColor = TextPrimary
+                        )
                     )
-                )
+
+                    Button(
+                        onClick = {
+                            viewModel.updateBaseUrl(baseUrlInput)
+                            viewModel.updateApiKey(apiKeyInput)
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(46.dp)
+                            .applePressEffect(onClick = {
+                                viewModel.updateBaseUrl(baseUrlInput)
+                                viewModel.updateApiKey(apiKeyInput)
+                            }),
+                        colors = ButtonDefaults.buttonColors(containerColor = AccentPrimary),
+                        shape = RoundedCornerShape(10.dp)
+                    ) {
+                        Text("Save Connection Settings", color = androidx.compose.ui.graphics.Color.White, style = MaterialTheme.typography.titleSmall)
+                    }
+                }
             }
 
-            HorizontalDivider(color = OutlineSubtle, modifier = Modifier.padding(vertical = 8.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
-            Text("Security Settings", style = MaterialTheme.typography.titleMedium, color = AccentPrimary)
+            Text("PARAMETERS OVERRIDE", style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold), color = TextSecondary)
 
-            Row(
+            Surface(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                shape = RoundedCornerShape(14.dp),
+                color = SurfaceCard,
+                border = androidx.compose.foundation.BorderStroke(0.5.dp, GlassBorder)
             ) {
-                Column {
-                    Text("Biometric App Lock", color = TextPrimary)
-                    Text("Require fingerprint scan to open the app", style = MaterialTheme.typography.bodySmall, color = TextSecondary)
+                Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                    // Temperature Slider
+                    Column {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text("Default Temperature", color = TextPrimary, style = MaterialTheme.typography.bodyMedium)
+                            Text(String.format("%.2f", tempInput), color = AccentPrimary, style = MaterialTheme.typography.labelLarge)
+                        }
+                        Slider(
+                            value = tempInput,
+                            onValueChange = {
+                                tempInput = it
+                                viewModel.updateTemperature(it)
+                            },
+                            valueRange = 0f..2f,
+                            colors = SliderDefaults.colors(
+                                activeTrackColor = AccentPrimary,
+                                inactiveTrackColor = OutlineSubtle,
+                                thumbColor = AccentPrimary
+                            )
+                        )
+                    }
+
+                    // Top P Slider
+                    Column {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text("Default Top P", color = TextPrimary, style = MaterialTheme.typography.bodyMedium)
+                            Text(String.format("%.2f", topPInput), color = AccentPrimary, style = MaterialTheme.typography.labelLarge)
+                        }
+                        Slider(
+                            value = topPInput,
+                            onValueChange = {
+                                topPInput = it
+                                viewModel.updateTopP(it)
+                            },
+                            valueRange = 0f..1f,
+                            colors = SliderDefaults.colors(
+                                activeTrackColor = AccentPrimary,
+                                inactiveTrackColor = OutlineSubtle,
+                                thumbColor = AccentPrimary
+                            )
+                        )
+                    }
                 }
-                Switch(
-                    checked = settings.appLockEnabled,
-                    onCheckedChange = { viewModel.updateAppLockEnabled(it) },
-                    colors = SwitchDefaults.colors(
-                        checkedThumbColor = AccentPrimary,
-                        checkedTrackColor = AccentPrimaryDim
-                    )
-                )
             }
 
-            HorizontalDivider(color = OutlineSubtle, modifier = Modifier.padding(vertical = 8.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
-            Text("App Maintenance", style = MaterialTheme.typography.titleMedium, color = ErrorRed)
+            Text("SECURITY", style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold), color = TextSecondary)
+
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(14.dp),
+                color = SurfaceCard,
+                border = androidx.compose.foundation.BorderStroke(0.5.dp, GlassBorder)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text("Biometric App Lock", color = TextPrimary, style = MaterialTheme.typography.bodyMedium)
+                        Text("Require fingerprint scan to open the app", style = MaterialTheme.typography.bodySmall, color = TextSecondary)
+                    }
+                    Switch(
+                        checked = settings.appLockEnabled,
+                        onCheckedChange = { viewModel.updateAppLockEnabled(it) },
+                        colors = SwitchDefaults.colors(
+                            checkedThumbColor = androidx.compose.ui.graphics.Color.White,
+                            checkedTrackColor = AccentPrimary,
+                            uncheckedTrackColor = SurfaceVariant
+                        )
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text("MAINTENANCE", style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold), color = ErrorRed)
 
             Button(
                 onClick = { isResetDialogOpen = true },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp)
+                    .applePressEffect(onClick = { isResetDialogOpen = true }),
                 colors = ButtonDefaults.buttonColors(containerColor = AccentDanger),
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(14.dp)
             ) {
-                Icon(Icons.Default.DeleteForever, null, tint = TextPrimary)
+                Icon(Icons.Default.DeleteForever, null, tint = androidx.compose.ui.graphics.Color.White)
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Reset All App Data", color = TextPrimary)
+                Text("Reset All App Data", color = androidx.compose.ui.graphics.Color.White, style = MaterialTheme.typography.titleSmall)
             }
         }
 

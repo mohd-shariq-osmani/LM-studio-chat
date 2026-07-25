@@ -1,7 +1,6 @@
 package com.lmstudio.chat.ui.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -14,10 +13,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.lmstudio.chat.domain.model.Persona
 import com.lmstudio.chat.theme.*
+import com.lmstudio.chat.util.applePressEffect
 
 @Composable
 fun PersonaCard(
@@ -33,31 +34,31 @@ fun PersonaCard(
         AccentPrimary
     }
 
-    Card(
+    Surface(
         modifier = modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = SurfaceCard),
-        border = androidx.compose.foundation.BorderStroke(1.dp, OutlineSubtle)
+            .applePressEffect(onClick = onClick),
+        shape = RoundedCornerShape(14.dp),
+        color = SurfaceCard,
+        border = androidx.compose.foundation.BorderStroke(0.5.dp, GlassBorder)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalArrangement = Arrangement.spacedBy(14.dp)
         ) {
             Box(
                 modifier = Modifier
-                    .size(48.dp)
+                    .size(46.dp)
                     .clip(RoundedCornerShape(12.dp))
-                    .background(accentColor.copy(alpha = 0.15f)),
+                    .background(accentColor.copy(alpha = 0.18f)),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = persona.name.firstOrNull()?.toString()?.uppercase() ?: "?",
-                    style = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                     color = accentColor
                 )
             }
@@ -66,7 +67,7 @@ fun PersonaCard(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
                         text = persona.name,
-                        style = MaterialTheme.typography.titleSmall,
+                        style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
                         color = TextPrimary,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
@@ -76,7 +77,7 @@ fun PersonaCard(
                         Spacer(modifier = Modifier.width(4.dp))
                         Box(
                             modifier = Modifier
-                                .clip(RoundedCornerShape(4.dp))
+                                .clip(RoundedCornerShape(6.dp))
                                 .background(accentColor.copy(alpha = 0.2f))
                                 .padding(horizontal = 6.dp, vertical = 2.dp)
                         ) {
@@ -122,7 +123,9 @@ fun PersonaCard(
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 IconButton(
                     onClick = onFavoriteToggle,
-                    modifier = Modifier.size(32.dp)
+                    modifier = Modifier
+                        .size(32.dp)
+                        .applePressEffect(onClick = onFavoriteToggle)
                 ) {
                     Icon(
                         imageVector = if (persona.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
@@ -133,7 +136,9 @@ fun PersonaCard(
                 }
                 IconButton(
                     onClick = onMenuClick,
-                    modifier = Modifier.size(32.dp)
+                    modifier = Modifier
+                        .size(32.dp)
+                        .applePressEffect(onClick = onMenuClick)
                 ) {
                     Icon(
                         imageVector = Icons.Default.MoreVert,
@@ -146,3 +151,4 @@ fun PersonaCard(
         }
     }
 }
+

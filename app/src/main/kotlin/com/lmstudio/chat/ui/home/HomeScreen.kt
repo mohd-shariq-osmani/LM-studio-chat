@@ -8,6 +8,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -26,6 +28,7 @@ import com.lmstudio.chat.domain.model.Persona
 import com.lmstudio.chat.theme.*
 import com.lmstudio.chat.ui.components.ModelSelector
 import com.lmstudio.chat.util.DateUtils
+import com.lmstudio.chat.util.applePressEffect
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -43,30 +46,59 @@ fun HomeScreen(
 
     Scaffold(
         bottomBar = {
-            NavigationBar(containerColor = SurfaceContainer) {
+            NavigationBar(
+                containerColor = GlassHeaderFill,
+                tonalElevation = 0.dp,
+                modifier = Modifier.border(0.5.dp, GlassBorder.copy(alpha = 0.2f))
+            ) {
                 NavigationBarItem(
                     selected = true,
                     onClick = {},
                     icon = { Icon(Icons.Default.Home, null) },
-                    label = { Text("Home") }
+                    label = { Text("Home", style = MaterialTheme.typography.labelSmall) },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = AccentPrimary,
+                        selectedTextColor = AccentPrimary,
+                        indicatorColor = AccentPrimary.copy(alpha = 0.15f),
+                        unselectedIconColor = TextTertiary,
+                        unselectedTextColor = TextTertiary
+                    )
                 )
                 NavigationBarItem(
                     selected = false,
                     onClick = onNavigateToConversations,
-                    icon = { Icon(Icons.Default.Chat, null) },
-                    label = { Text("Chats") }
+                    icon = { Icon(Icons.AutoMirrored.Filled.Chat, null) },
+                    label = { Text("Chats", style = MaterialTheme.typography.labelSmall) },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = AccentPrimary,
+                        selectedTextColor = AccentPrimary,
+                        unselectedIconColor = TextTertiary,
+                        unselectedTextColor = TextTertiary
+                    )
                 )
                 NavigationBarItem(
                     selected = false,
                     onClick = onNavigateToPersonas,
                     icon = { Icon(Icons.Default.Face, null) },
-                    label = { Text("Personas") }
+                    label = { Text("Personas", style = MaterialTheme.typography.labelSmall) },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = AccentPrimary,
+                        selectedTextColor = AccentPrimary,
+                        unselectedIconColor = TextTertiary,
+                        unselectedTextColor = TextTertiary
+                    )
                 )
                 NavigationBarItem(
                     selected = false,
                     onClick = onNavigateToSettings,
                     icon = { Icon(Icons.Default.Settings, null) },
-                    label = { Text("Settings") }
+                    label = { Text("Settings", style = MaterialTheme.typography.labelSmall) },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = AccentPrimary,
+                        selectedTextColor = AccentPrimary,
+                        unselectedIconColor = TextTertiary,
+                        unselectedTextColor = TextTertiary
+                    )
                 )
             }
         }
@@ -82,23 +114,28 @@ fun HomeScreen(
             // Title and Greeting
             item {
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(top = 24.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 20.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Column {
                         Text(
-                            text = DateUtils.getGreeting(),
-                            style = MaterialTheme.typography.headlineSmall,
-                            color = TextSecondary
+                            text = DateUtils.getGreeting().uppercase(),
+                            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+                            color = AccentPrimary
                         )
                         Text(
                             text = "LM Studio Chat",
-                            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                            style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),
                             color = TextPrimary
                         )
                     }
-                    IconButton(onClick = onNavigateToSearch) {
+                    IconButton(
+                        onClick = onNavigateToSearch,
+                        modifier = Modifier.applePressEffect(onClick = onNavigateToSearch)
+                    ) {
                         Icon(Icons.Default.Search, "Search", tint = TextPrimary)
                     }
                 }
@@ -107,10 +144,10 @@ fun HomeScreen(
             // Model Selection
             item {
                 Text(
-                    text = "Active Model",
-                    style = MaterialTheme.typography.titleSmall,
+                    text = "ACTIVE MODEL",
+                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.SemiBold),
                     color = TextSecondary,
-                    modifier = Modifier.padding(top = 8.dp)
+                    modifier = Modifier.padding(top = 4.dp)
                 )
                 Spacer(modifier = Modifier.height(6.dp))
                 ModelSelector(
@@ -137,24 +174,30 @@ fun HomeScreen(
                 ) {
                     Button(
                         onClick = { viewModel.startNewChat(onNavigateToChat) },
-                        modifier = Modifier.weight(1f).height(48.dp),
-                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(50.dp)
+                            .applePressEffect(onClick = { viewModel.startNewChat(onNavigateToChat) }),
+                        shape = RoundedCornerShape(14.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = AccentPrimary)
                     ) {
-                        Icon(Icons.Default.Add, null, tint = Background)
+                        Icon(Icons.Default.Add, null, tint = Color.White)
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text("New Chat", color = Background, style = MaterialTheme.typography.titleSmall)
+                        Text("New Chat", color = Color.White, style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold))
                     }
                     OutlinedButton(
                         onClick = onNavigateToPrompts,
-                        modifier = Modifier.weight(1f).height(48.dp),
-                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(50.dp)
+                            .applePressEffect(onClick = onNavigateToPrompts),
+                        shape = RoundedCornerShape(14.dp),
                         colors = ButtonDefaults.outlinedButtonColors(contentColor = TextPrimary),
-                        border = androidx.compose.foundation.BorderStroke(1.dp, OutlineDefault)
+                        border = androidx.compose.foundation.BorderStroke(0.5.dp, GlassBorder)
                     ) {
-                        Icon(Icons.Default.AutoAwesome, null, tint = TextPrimary)
+                        Icon(Icons.Default.AutoAwesome, null, tint = AccentPurple)
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text("Prompts", style = MaterialTheme.typography.titleSmall)
+                        Text("Prompts", style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold))
                     }
                 }
             }
@@ -162,17 +205,19 @@ fun HomeScreen(
             // Recent chats title
             item {
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Recent Chats",
-                        style = MaterialTheme.typography.titleMedium,
+                        text = "Recent Conversations",
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
                         color = TextPrimary
                     )
                     TextButton(onClick = onNavigateToConversations) {
-                        Text("See All", color = AccentPrimary)
+                        Text("See All", color = AccentPrimary, style = MaterialTheme.typography.labelLarge)
                     }
                 }
             }
@@ -182,10 +227,10 @@ fun HomeScreen(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(100.dp)
-                            .clip(RoundedCornerShape(12.dp))
+                            .height(90.dp)
+                            .clip(RoundedCornerShape(14.dp))
                             .background(SurfaceCard)
-                            .border(1.dp, OutlineSubtle, RoundedCornerShape(12.dp)),
+                            .border(0.5.dp, GlassBorder, RoundedCornerShape(14.dp)),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
@@ -204,17 +249,19 @@ fun HomeScreen(
             // Pinned personas title
             item {
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
                         text = "Favorite Personas",
-                        style = MaterialTheme.typography.titleMedium,
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
                         color = TextPrimary
                     )
                     TextButton(onClick = onNavigateToPersonas) {
-                        Text("See All", color = AccentPrimary)
+                        Text("See All", color = AccentPrimary, style = MaterialTheme.typography.labelLarge)
                     }
                 }
             }
@@ -224,10 +271,10 @@ fun HomeScreen(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(100.dp)
-                            .clip(RoundedCornerShape(12.dp))
+                            .height(90.dp)
+                            .clip(RoundedCornerShape(14.dp))
                             .background(SurfaceCard)
-                            .border(1.dp, OutlineSubtle, RoundedCornerShape(12.dp)),
+                            .border(0.5.dp, GlassBorder, RoundedCornerShape(14.dp)),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
@@ -262,27 +309,37 @@ fun HomeChatCard(
     chat: Conversation,
     onClick: () -> Unit
 ) {
-    Card(
-        onClick = onClick,
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = SurfaceCard),
-        border = androidx.compose.foundation.BorderStroke(1.dp, OutlineSubtle)
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .applePressEffect(onClick = onClick),
+        shape = RoundedCornerShape(14.dp),
+        color = SurfaceCard,
+        border = androidx.compose.foundation.BorderStroke(0.5.dp, GlassBorder)
     ) {
         Row(
             modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalArrangement = Arrangement.spacedBy(14.dp)
         ) {
-            Icon(Icons.Default.ChatBubbleOutline, null, tint = TextTertiary)
+            Box(
+                modifier = Modifier
+                    .size(36.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(AccentPrimary.copy(alpha = 0.15f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(Icons.Default.ChatBubbleOutline, null, tint = AccentPrimary, modifier = Modifier.size(18.dp))
+            }
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = chat.title,
-                    style = MaterialTheme.typography.titleSmall,
+                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
                     color = TextPrimary,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
+                Spacer(modifier = Modifier.height(2.dp))
                 Text(
                     text = chat.lastMessagePreview.ifBlank { "No messages yet" },
                     style = MaterialTheme.typography.bodySmall,
@@ -291,7 +348,7 @@ fun HomeChatCard(
                     overflow = TextOverflow.Ellipsis
                 )
             }
-            Icon(Icons.Default.ChevronRight, null, tint = TextTertiary)
+            Icon(Icons.Default.ChevronRight, null, tint = TextTertiary, modifier = Modifier.size(18.dp))
         }
     }
 }
@@ -307,39 +364,41 @@ fun HomePersonaCard(
         AccentPrimary
     }
 
-    Card(
-        onClick = onClick,
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = SurfaceCard),
-        border = androidx.compose.foundation.BorderStroke(1.dp, OutlineSubtle)
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .applePressEffect(onClick = onClick),
+        shape = RoundedCornerShape(14.dp),
+        color = SurfaceCard,
+        border = androidx.compose.foundation.BorderStroke(0.5.dp, GlassBorder)
     ) {
         Row(
             modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalArrangement = Arrangement.spacedBy(14.dp)
         ) {
             Box(
                 modifier = Modifier
-                    .size(36.dp)
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(accentColor.copy(alpha = 0.15f)),
+                    .size(38.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(accentColor.copy(alpha = 0.18f)),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = persona.name.firstOrNull()?.toString()?.uppercase() ?: "?",
-                    style = MaterialTheme.typography.titleSmall,
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                     color = accentColor
                 )
             }
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = persona.name,
-                    style = MaterialTheme.typography.titleSmall,
+                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
                     color = TextPrimary,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
+                Spacer(modifier = Modifier.height(2.dp))
                 Text(
                     text = persona.description,
                     style = MaterialTheme.typography.bodySmall,
@@ -348,7 +407,8 @@ fun HomePersonaCard(
                     overflow = TextOverflow.Ellipsis
                 )
             }
-            Icon(Icons.Default.ArrowForward, null, tint = TextTertiary, modifier = Modifier.size(16.dp))
+            Icon(Icons.AutoMirrored.Filled.ArrowForward, null, tint = TextTertiary, modifier = Modifier.size(16.dp))
         }
     }
 }
+

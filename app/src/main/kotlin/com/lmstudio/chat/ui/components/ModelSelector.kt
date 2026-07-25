@@ -18,10 +18,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.lmstudio.chat.domain.model.ModelInfo
 import com.lmstudio.chat.theme.*
+import com.lmstudio.chat.util.applePressEffect
 
 @Composable
 fun ModelSelector(
@@ -38,20 +41,28 @@ fun ModelSelector(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(12.dp))
-                .background(SurfaceVariant)
-                .border(1.dp, OutlineSubtle, RoundedCornerShape(12.dp))
-                .clickable { if (!isLoading) expanded = !expanded }
+                .clip(RoundedCornerShape(14.dp))
+                .background(SurfaceVariant.copy(alpha = 0.85f))
+                .border(0.5.dp, GlassBorder, RoundedCornerShape(14.dp))
+                .applePressEffect(enabled = !isLoading, onClick = { expanded = !expanded })
                 .padding(horizontal = 16.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            Icon(
-                imageVector = Icons.Default.Memory,
-                contentDescription = null,
-                tint = AccentPrimary,
-                modifier = Modifier.size(18.dp)
-            )
+            Box(
+                modifier = Modifier
+                    .size(32.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(AccentPrimary.copy(alpha = 0.15f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Memory,
+                    contentDescription = null,
+                    tint = AccentPrimary,
+                    modifier = Modifier.size(18.dp)
+                )
+            }
             Column(modifier = Modifier.weight(1f)) {
                 if (isLoading) {
                     Text(
@@ -62,7 +73,7 @@ fun ModelSelector(
                 } else if (selectedModelInfo != null) {
                     Text(
                         text = selectedModelInfo.name.ifBlank { selectedModelInfo.id },
-                        style = MaterialTheme.typography.bodyMedium,
+                        style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
                         color = TextPrimary,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
@@ -71,7 +82,7 @@ fun ModelSelector(
                         Text(
                             text = "${ctx / 1000}k context",
                             style = MaterialTheme.typography.labelSmall,
-                            color = TextTertiary
+                            color = TextSecondary
                         )
                     }
                 } else {
@@ -99,16 +110,16 @@ fun ModelSelector(
         }
 
         AnimatedVisibility(visible = expanded && models.isNotEmpty()) {
-            Card(
+            Surface(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 4.dp),
-                shape = RoundedCornerShape(12.dp),
-                colors = CardDefaults.cardColors(containerColor = SurfaceElevated),
-                border = androidx.compose.foundation.BorderStroke(1.dp, OutlineSubtle)
+                    .padding(top = 6.dp),
+                shape = RoundedCornerShape(14.dp),
+                color = SurfaceElevated,
+                border = androidx.compose.foundation.BorderStroke(0.5.dp, GlassBorder)
             ) {
                 LazyColumn(
-                    modifier = Modifier.heightIn(max = 300.dp)
+                    modifier = Modifier.heightIn(max = 280.dp)
                 ) {
                     items(models) { model ->
                         ModelItem(
@@ -135,8 +146,8 @@ private fun ModelItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .background(if (isSelected) AccentPrimaryDim.copy(alpha = 0.3f) else androidx.compose.ui.graphics.Color.Transparent)
+            .applePressEffect(onClick = onClick)
+            .background(if (isSelected) AccentPrimary.copy(alpha = 0.15f) else Color.Transparent)
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -144,7 +155,7 @@ private fun ModelItem(
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = model.name.ifBlank { model.id },
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal),
                 color = if (isSelected) AccentPrimary else TextPrimary,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
@@ -158,13 +169,6 @@ private fun ModelItem(
                     overflow = TextOverflow.Ellipsis
                 )
             }
-            model.contextLength?.let { ctx ->
-                Text(
-                    text = "${ctx / 1000}k context",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = TextTertiary
-                )
-            }
         }
         if (isSelected) {
             Icon(
@@ -176,3 +180,4 @@ private fun ModelItem(
         }
     }
 }
+
