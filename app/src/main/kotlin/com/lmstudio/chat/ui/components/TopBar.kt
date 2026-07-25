@@ -73,6 +73,7 @@ fun LmTopBar(
                 }
             },
             actions = actions,
+            windowInsets = WindowInsets(0.dp),
             colors = TopAppBarDefaults.topAppBarColors(
                 containerColor = Color.Transparent,
                 titleContentColor = TextPrimary

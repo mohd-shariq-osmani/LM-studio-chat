@@ -21,12 +21,12 @@ val TextSecondary = Color(0x99EBEBF5)       // Secondary Label (60% White)
 val TextTertiary = Color(0x4DEBEBF5)        // Tertiary Label (30% White)
 val TextDisabled = Color(0x26EBEBF5)        // Quaternary Label (15% White)
 
-// Apple System Accent Colors (Neon Purple Palette)
-val AccentPrimary = Color(0xFFB537FF)        // Electric Neon Purple
-val AccentPrimaryDim = Color(0xFF7B00CC)     // Deep Neon Purple Tint
+// Apple System Accent Colors (Apple System Blue Palette)
+val AccentPrimary = Color(0xFF0A84FF)        // Apple System Blue (Dark)
+val AccentPrimaryDim = Color(0xFF0055B3)     // Deep Blue Tint
 val AccentSuccess = Color(0xFF30D158)        // Apple System Green
 val AccentIndigo = Color(0xFF5E5CE6)         // Apple System Indigo
-val AccentPurple = Color(0xFFD946EF)         // Vibrant Purple
+val AccentPurple = Color(0xFFBF5AF2)         // Apple System Purple
 val AccentDanger = Color(0xFFFF453A)         // Apple System Red
 val AccentWarning = Color(0xFFFF9F0A)        // Apple System Orange
 
@@ -36,7 +36,7 @@ val OutlineDefault = Color(0x54545458)      // System Fill Separator (33% Gray)
 val OutlineBright = Color(0x8C545458)       // Active Highlight
 
 // Chat Message Bubbles (iOS iMessage / macOS Style)
-val UserBubble = Color(0xFFB537FF)           // Neon Purple Accent Bubble
+val UserBubble = Color(0xFF0A84FF)           // Apple Blue Accent Bubble
 val UserBubbleText = Color(0xFFFFFFFF)
 val AssistantBubble = Color(0xFF2C2C2E)      // Apple System Gray 5 Bubble
 val AssistantBubbleText = Color(0xFFF2F2F7)

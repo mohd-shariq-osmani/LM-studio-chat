@@ -39,12 +39,7 @@ fun ConversationsScreen(
         topBar = {
             LmTopBar(
                 title = "Conversations",
-                onNavigateBack = onNavigateBack,
-                actions = {
-                    IconButton(onClick = onNavigateToSearch) {
-                        Icon(Icons.Default.Search, null, tint = TextPrimary)
-                    }
-                }
+                onNavigateBack = onNavigateBack
             )
         },
         floatingActionButton = {
