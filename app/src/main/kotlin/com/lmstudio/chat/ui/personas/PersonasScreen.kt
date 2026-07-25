@@ -1,21 +1,23 @@
 package com.lmstudio.chat.ui.personas
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.lmstudio.chat.theme.*
-import com.lmstudio.chat.ui.components.LmTopBar
 import com.lmstudio.chat.ui.components.PersonaCard
 import com.lmstudio.chat.util.applePressEffect
 
@@ -32,12 +34,6 @@ fun PersonasScreen(
     var menuPersonaId by remember { mutableStateOf<Long?>(null) }
 
     Scaffold(
-        topBar = {
-            LmTopBar(
-                title = "Personas",
-                onNavigateBack = onNavigateBack
-            )
-        },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = onNavigateToCreatePersona,
@@ -48,7 +44,7 @@ fun PersonasScreen(
                 contentColor = androidx.compose.ui.graphics.Color.White,
                 shape = RoundedCornerShape(16.dp)
             ) {
-                Icon(Icons.Default.Add, null)
+                Icon(Icons.Default.Add, "New Persona")
             }
         }
     ) { padding ->
@@ -57,7 +53,42 @@ fun PersonasScreen(
                 .fillMaxSize()
                 .background(Background)
                 .padding(padding)
+                .padding(horizontal = 16.dp)
         ) {
+            // Unified Screen Header
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .statusBarsPadding()
+                    .padding(top = 12.dp, bottom = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                IconButton(
+                    onClick = onNavigateBack,
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(androidx.compose.foundation.shape.CircleShape)
+                        .background(SurfaceVariant)
+                        .border(0.5.dp, GlassBorder, androidx.compose.foundation.shape.CircleShape)
+                        .applePressEffect(onClick = onNavigateBack)
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back",
+                        tint = TextPrimary,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+
+                Text(
+                    text = "Personas",
+                    style = MaterialTheme.typography.headlineMedium.copy(fontWeight = androidx.compose.ui.text.font.FontWeight.Bold),
+                    color = TextPrimary
+                )
+            }
+
+            // Search Bar Capsule
             OutlinedTextField(
                 value = searchQuery,
                 onValueChange = {
@@ -68,17 +99,18 @@ fun PersonasScreen(
                 leadingIcon = { Icon(Icons.Default.Search, null, tint = TextSecondary) },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                shape = RoundedCornerShape(12.dp),
+                    .padding(vertical = 6.dp),
+                shape = RoundedCornerShape(14.dp),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = SurfaceVariant,
-                    unfocusedContainerColor = SurfaceVariant,
-                    focusedBorderColor = OutlineBright,
-                    unfocusedBorderColor = OutlineSubtle,
+                    focusedContainerColor = SurfaceVariant.copy(alpha = 0.85f),
+                    unfocusedContainerColor = SurfaceVariant.copy(alpha = 0.85f),
+                    focusedBorderColor = GlassBorder,
+                    unfocusedBorderColor = androidx.compose.ui.graphics.Color.Transparent,
                     focusedTextColor = TextPrimary,
                     unfocusedTextColor = TextPrimary
                 )
             )
+            Spacer(modifier = Modifier.height(4.dp))
 
             if (state.isLoading) {
                 Box(
