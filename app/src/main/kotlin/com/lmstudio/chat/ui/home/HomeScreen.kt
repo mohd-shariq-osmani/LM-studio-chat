@@ -49,7 +49,9 @@ fun HomeScreen(
             NavigationBar(
                 containerColor = GlassHeaderFill,
                 tonalElevation = 0.dp,
-                modifier = Modifier.border(0.5.dp, GlassBorder.copy(alpha = 0.2f))
+                modifier = Modifier
+                    .border(0.5.dp, GlassBorder.copy(alpha = 0.2f))
+                    .navigationBarsPadding()
             ) {
                 NavigationBarItem(
                     selected = true,
@@ -59,7 +61,7 @@ fun HomeScreen(
                     colors = NavigationBarItemDefaults.colors(
                         selectedIconColor = AccentPrimary,
                         selectedTextColor = AccentPrimary,
-                        indicatorColor = AccentPrimary.copy(alpha = 0.15f),
+                        indicatorColor = Color.Transparent,
                         unselectedIconColor = TextTertiary,
                         unselectedTextColor = TextTertiary
                     )
@@ -72,6 +74,7 @@ fun HomeScreen(
                     colors = NavigationBarItemDefaults.colors(
                         selectedIconColor = AccentPrimary,
                         selectedTextColor = AccentPrimary,
+                        indicatorColor = Color.Transparent,
                         unselectedIconColor = TextTertiary,
                         unselectedTextColor = TextTertiary
                     )
@@ -84,6 +87,7 @@ fun HomeScreen(
                     colors = NavigationBarItemDefaults.colors(
                         selectedIconColor = AccentPrimary,
                         selectedTextColor = AccentPrimary,
+                        indicatorColor = Color.Transparent,
                         unselectedIconColor = TextTertiary,
                         unselectedTextColor = TextTertiary
                     )
@@ -96,6 +100,7 @@ fun HomeScreen(
                     colors = NavigationBarItemDefaults.colors(
                         selectedIconColor = AccentPrimary,
                         selectedTextColor = AccentPrimary,
+                        indicatorColor = Color.Transparent,
                         unselectedIconColor = TextTertiary,
                         unselectedTextColor = TextTertiary
                     )
@@ -116,7 +121,8 @@ fun HomeScreen(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 20.dp),
+                        .statusBarsPadding()
+                        .padding(top = 16.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {

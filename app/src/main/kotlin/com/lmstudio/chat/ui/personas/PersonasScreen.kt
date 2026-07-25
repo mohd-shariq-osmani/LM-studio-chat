@@ -17,6 +17,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.lmstudio.chat.theme.*
 import com.lmstudio.chat.ui.components.LmTopBar
 import com.lmstudio.chat.ui.components.PersonaCard
+import com.lmstudio.chat.util.applePressEffect
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,8 +41,12 @@ fun PersonasScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = onNavigateToCreatePersona,
+                modifier = Modifier
+                    .navigationBarsPadding()
+                    .applePressEffect(onClick = onNavigateToCreatePersona),
                 containerColor = AccentPrimary,
-                contentColor = Background
+                contentColor = androidx.compose.ui.graphics.Color.White,
+                shape = RoundedCornerShape(16.dp)
             ) {
                 Icon(Icons.Default.Add, null)
             }

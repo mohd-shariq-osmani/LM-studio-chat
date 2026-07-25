@@ -30,6 +30,7 @@ fun LmTopBar(
     Surface(
         modifier = Modifier
             .fillMaxWidth()
+            .statusBarsPadding()
             .border(
                 width = 0.5.dp,
                 color = GlassBorder.copy(alpha = 0.2f)

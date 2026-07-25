@@ -50,7 +50,9 @@ fun ConversationsScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = onNavigateToNewChat,
-                modifier = Modifier.applePressEffect(onClick = onNavigateToNewChat),
+                modifier = Modifier
+                    .navigationBarsPadding()
+                    .applePressEffect(onClick = onNavigateToNewChat),
                 containerColor = AccentPrimary,
                 contentColor = androidx.compose.ui.graphics.Color.White,
                 shape = RoundedCornerShape(16.dp)
