@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -70,23 +71,11 @@ fun ChatScreen(
         }
     }
 
-    Scaffold(
-        topBar = {
-            LmTopBar(
-                title = state.selectedPersona?.name ?: "Chat",
-                subtitle = "Tap to change persona • ${state.selectedModel.substringAfterLast("/")}",
-                onNavigateBack = onNavigateBack,
-                actions = {
-                    IconButton(onClick = { isPersonaSheetOpen = true }) {
-                        Icon(Icons.Default.Face, "Change Persona", tint = TextPrimary)
-                    }
-                    IconButton(onClick = onNavigateToSettings) {
-                        Icon(Icons.Default.Settings, null, tint = TextPrimary)
-                    }
-                }
-            )
-        }
-    ) { padding ->
+    val context = androidx.compose.ui.platform.LocalContext.current
+    var isRenameDialogOpen by remember { mutableStateOf(false) }
+    var renameTitleInput by remember(state.conversationTitle) { mutableStateOf(state.conversationTitle) }
+
+    Scaffold { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -94,6 +83,114 @@ fun ChatScreen(
                 .padding(padding)
                 .imePadding()
         ) {
+            // Unified Top Screen Header
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                color = GlassHeaderFill,
+                border = androidx.compose.foundation.BorderStroke(0.5.dp, GlassBorder.copy(alpha = 0.2f))
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .statusBarsPadding()
+                        .padding(horizontal = 16.dp, vertical = 10.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    IconButton(
+                        onClick = onNavigateBack,
+                        modifier = Modifier
+                            .size(38.dp)
+                            .clip(androidx.compose.foundation.shape.CircleShape)
+                            .background(SurfaceVariant)
+                            .border(0.5.dp, GlassBorder, androidx.compose.foundation.shape.CircleShape)
+                            .applePressEffect(onClick = onNavigateBack)
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            tint = TextPrimary,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .clickable { isRenameDialogOpen = true }
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                text = state.conversationTitle.ifBlank { state.selectedPersona?.name ?: "Chat" },
+                                style = MaterialTheme.typography.titleMedium.copy(fontWeight = androidx.compose.ui.text.font.FontWeight.Bold),
+                                color = TextPrimary,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Icon(
+                                imageVector = Icons.Default.Edit,
+                                contentDescription = "Rename Chat",
+                                tint = AccentPrimary,
+                                modifier = Modifier.size(14.dp)
+                            )
+                        }
+                        Text(
+                            text = "${state.selectedPersona?.name ?: "Assistant"} • ${state.selectedModel.substringAfterLast("/")}",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = TextSecondary,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+
+                    // Export Chat as .txt Action
+                    IconButton(
+                        onClick = {
+                            val text = viewModel.exportChatText()
+                            val intent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
+                                type = "text/plain"
+                                putExtra(android.content.Intent.EXTRA_SUBJECT, state.conversationTitle)
+                                putExtra(android.content.Intent.EXTRA_TEXT, text)
+                            }
+                            context.startActivity(android.content.Intent.createChooser(intent, "Export Chat"))
+                        },
+                        modifier = Modifier
+                            .size(36.dp)
+                            .applePressEffect(onClick = {
+                                val text = viewModel.exportChatText()
+                                val intent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
+                                    type = "text/plain"
+                                    putExtra(android.content.Intent.EXTRA_SUBJECT, state.conversationTitle)
+                                    putExtra(android.content.Intent.EXTRA_TEXT, text)
+                                }
+                                context.startActivity(android.content.Intent.createChooser(intent, "Export Chat"))
+                            })
+                    ) {
+                        Icon(Icons.Default.Share, "Export Chat as TXT", tint = TextPrimary, modifier = Modifier.size(18.dp))
+                    }
+
+                    // Persona Selector Sheet Button
+                    IconButton(
+                        onClick = { isPersonaSheetOpen = true },
+                        modifier = Modifier
+                            .size(36.dp)
+                            .applePressEffect(onClick = { isPersonaSheetOpen = true })
+                    ) {
+                        Icon(Icons.Default.Face, "Change Persona", tint = TextPrimary, modifier = Modifier.size(18.dp))
+                    }
+
+                    // Settings Button
+                    IconButton(
+                        onClick = onNavigateToSettings,
+                        modifier = Modifier
+                            .size(36.dp)
+                            .applePressEffect(onClick = onNavigateToSettings)
+                    ) {
+                        Icon(Icons.Default.Settings, "Settings", tint = TextPrimary, modifier = Modifier.size(18.dp))
+                    }
+                }
+            }
             // Message List
             LazyColumn(
                 state = listState,
@@ -238,7 +335,6 @@ fun ChatScreen(
                                         attachedImages.clear()
                                     }
                                 })
-                                .clip(RoundedCornerShape(18.dp))
                                 .background(if (isSendActive) AccentPrimary else OutlineSubtle)
                         ) {
                             Icon(
@@ -320,11 +416,52 @@ fun ChatScreen(
                                         overflow = TextOverflow.Ellipsis
                                     )
                                 }
-                            }
                         }
                     }
                 }
             }
         }
+
+        // Rename Chat Dialog
+        if (isRenameDialogOpen) {
+            AlertDialog(
+                onDismissRequest = { isRenameDialogOpen = false },
+                title = { Text("Rename Chat", color = TextPrimary, style = MaterialTheme.typography.titleMedium.copy(fontWeight = androidx.compose.ui.text.font.FontWeight.Bold)) },
+                text = {
+                    OutlinedTextField(
+                        value = renameTitleInput,
+                        onValueChange = { renameTitleInput = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true,
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = AccentPrimary,
+                            unfocusedBorderColor = OutlineDefault,
+                            focusedTextColor = TextPrimary,
+                            unfocusedTextColor = TextPrimary
+                        ),
+                        shape = RoundedCornerShape(10.dp)
+                    )
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            if (renameTitleInput.isNotBlank()) {
+                                viewModel.renameConversation(renameTitleInput)
+                            }
+                            isRenameDialogOpen = false
+                        }
+                    ) {
+                        Text("Save", color = AccentPrimary, style = MaterialTheme.typography.titleSmall)
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { isRenameDialogOpen = false }) {
+                        Text("Cancel", color = TextSecondary, style = MaterialTheme.typography.titleSmall)
+                    }
+                },
+                containerColor = SurfaceElevated
+            )
+        }
     }
+}
 }

@@ -65,6 +65,7 @@ class ChatViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         conversationId = null,
+                        conversationTitle = "New Chat",
                         messages = emptyList(),
                         selectedPersona = defaultPersona
                     )
@@ -81,6 +82,7 @@ class ChatViewModel @Inject constructor(
                 val persona = personaRepository.getPersonaById(conversation.personaId)
                 _uiState.update {
                     it.copy(
+                        conversationTitle = conversation.title,
                         selectedModel = conversation.modelId,
                         selectedPersona = persona
                     )
@@ -92,6 +94,39 @@ class ChatViewModel @Inject constructor(
                 _uiState.update { it.copy(messages = messages) }
             }
         }
+    }
+
+    fun renameConversation(newTitle: String) {
+        val id = _uiState.value.conversationId ?: return
+        if (newTitle.isBlank()) return
+        viewModelScope.launch {
+            conversationRepository.renameConversation(id, newTitle)
+            _uiState.update { it.copy(conversationTitle = newTitle) }
+        }
+    }
+
+    fun exportChatText(): String {
+        val state = _uiState.value
+        val sb = java.lang.StringBuilder()
+        sb.appendLine("LM Studio Chat Export")
+        sb.appendLine("========================================")
+        sb.appendLine("Title: ${state.conversationTitle}")
+        sb.appendLine("Model: ${state.selectedModel}")
+        state.selectedPersona?.let { sb.appendLine("Persona: ${it.name}") }
+        sb.appendLine("Date: ${java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.getDefault()).format(java.util.Date())}")
+        sb.appendLine("========================================\n")
+
+        for (msg in state.messages) {
+            val roleLabel = when (msg.role) {
+                MessageRole.USER -> "[USER]"
+                MessageRole.ASSISTANT -> "[ASSISTANT]"
+                MessageRole.SYSTEM -> "[SYSTEM]"
+            }
+            sb.appendLine("$roleLabel")
+            sb.appendLine(msg.content)
+            sb.appendLine()
+        }
+        return sb.toString()
     }
 
     private fun loadModels() {
@@ -282,6 +317,7 @@ class ChatViewModel @Inject constructor(
 
 data class ChatUiState(
     val conversationId: Long? = null,
+    val conversationTitle: String = "New Chat",
     val messages: List<Message> = emptyList(),
     val models: List<ModelInfo> = emptyList(),
     val selectedModel: String = "",
